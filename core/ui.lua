@@ -28,9 +28,7 @@ local function isVanillaCollab(selected_collab)
 end
 
 G.FUNCS.SMODS_refresh_deckskin_extras = function(selected_skin, suit)
-	sendDebugMessage("SMODS_refresh_deckskin_extras called...") -- temporary, makes sure the function's called
 	if isVanillaCollab(selected_skin) then
-		sendDebugMessage("Key is default, resetting...") -- temp
 		SMODS.Suits[suit].keep_base_colours = false
 		if SMODS.Suits[suit].lc_ui_atlas then SMODS.Suits[suit].lc_ui_atlas = nil end
 		if SMODS.Suits[suit].hc_ui_atlas then SMODS.Suits[suit].hc_ui_atlas = nil end
@@ -41,7 +39,6 @@ G.FUNCS.SMODS_refresh_deckskin_extras = function(selected_skin, suit)
 	else
 		for key, skin in pairs(SMODS.DeckSkins) do
 			if key == selected_skin then
-				sendDebugMessage("Key is not default. "..key.." matches with selected skin ("..selected_skin..")") -- temp
 				SMODS.Suits[skin.suit].keep_base_colours = false
 				if skin.lc_ui_atlas then SMODS.Suits[skin.suit].lc_ui_atlas = skin.lc_ui_atlas else SMODS.Suits[skin.suit].lc_ui_atlas = nil end
 				if skin.hc_ui_atlas then SMODS.Suits[skin.suit].hc_ui_atlas = skin.hc_ui_atlas else SMODS.Suits[skin.suit].hc_ui_atlas = nil end
