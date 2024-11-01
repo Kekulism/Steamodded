@@ -131,3 +131,39 @@ function create_UIBox_customize_deck()
 end
 '''
 match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = "functions/button_callbacks.lua"
+pattern = '''
+    end
+  end
+  G:save_settings()
+'''
+position = "after"
+payload = '''
+G.FUNCS.SMODS_refresh_deckskin_extras(G.SETTINGS.CUSTOM_DECK.Collabs[args.cycle_config.curr_suit], args.cycle_config.curr_suit)
+'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = "functions/button_callbacks.lua"
+pattern = '''
+  G.C.SUITS.Hearts = new_colour_proto.Hearts
+  G.C.SUITS.Diamonds = new_colour_proto.Diamonds
+  G.C.SUITS.Spades = new_colour_proto.Spades
+  G.C.SUITS.Clubs = new_colour_proto.Clubs
+  for k, v in pairs(G.I.CARD) do
+    if v.config and v.config.card and v.children.front and v.ability.effect ~= 'Stone Card' then
+      v:set_sprites(nil, v.config.card)
+    end
+  end
+'''
+position = "after"
+payload = '''
+for k, _ in pairs(G.C.SUITS) do
+ G.FUNCS.SMODS_refresh_deckskin_extras(G.SETTINGS.CUSTOM_DECK.Collabs[k], k)
+end
+'''
+match_indent = true

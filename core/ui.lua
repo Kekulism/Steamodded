@@ -18,6 +18,41 @@ function STR_UNPACK(str)
 	end
 end
 
+local function isVanillaCollab(selected_collab)
+	for _, collab in ipairs(G.VANILLA_COLLABS.collabs) do
+		if selected_collab == collab then
+			return true
+		end
+	end
+	return false
+end
+
+G.FUNCS.SMODS_refresh_deckskin_extras = function(selected_skin, suit)
+	sendDebugMessage("SMODS_refresh_deckskin_extras called...") -- temporary, makes sure the function's called
+	if isVanillaCollab(selected_skin) then
+		sendDebugMessage("Key is default, resetting...") -- temp
+		SMODS.Suits[suit].keep_base_colours = false
+		if SMODS.Suits[suit].lc_ui_atlas then SMODS.Suits[suit].lc_ui_atlas = nil end
+		if SMODS.Suits[suit].hc_ui_atlas then SMODS.Suits[suit].hc_ui_atlas = nil end
+		if SMODS.Suits[suit].lc_colour then SMODS.Suits[suit].lc_colour = G.VANILLA_COLLABS.lc_colours[suit] end
+		if SMODS.Suits[suit].hc_colour then SMODS.Suits[suit].hc_colour = G.VANILLA_COLLABS.hc_colours[suit] end
+		if SMODS.Suits[suit].ui_pos then SMODS.Suits[suit].ui_pos = G.VANILLA_COLLABS.ui_pos[suit] end
+		SMODS.Suits[suit].process_loc_text(SMODS.Suits[suit])
+	else
+		for key, skin in pairs(SMODS.DeckSkins) do
+			if key == selected_skin then
+				sendDebugMessage("Key is not default. "..key.." matches with selected skin ("..selected_skin..")") -- temp
+				SMODS.Suits[skin.suit].keep_base_colours = false
+				if skin.lc_ui_atlas then SMODS.Suits[skin.suit].lc_ui_atlas = skin.lc_ui_atlas else SMODS.Suits[skin.suit].lc_ui_atlas = nil end
+				if skin.hc_ui_atlas then SMODS.Suits[skin.suit].hc_ui_atlas = skin.hc_ui_atlas else SMODS.Suits[skin.suit].hc_ui_atlas = nil end
+				if skin.lc_colour then SMODS.Suits[skin.suit].lc_colour = skin.lc_colour else SMODS.Suits[skin.suit].lc_colour = G.VANILLA_COLLABS.lc_colours[skin.suit] end
+				if skin.hc_colour then SMODS.Suits[skin.suit].hc_colour = skin.hc_colour else SMODS.Suits[skin.suit].hc_colour = G.VANILLA_COLLABS.hc_colours[skin.suit] end
+				if skin.ui_pos then SMODS.Suits[skin.suit].ui_pos = skin.ui_pos else SMODS.Suits[skin.suit].ui_pos = G.VANILLA_COLLABS.ui_pos[skin.suit] end
+				SMODS.Suits[skin.suit].process_loc_text(SMODS.Suits[skin.suit])
+			end
+		end
+	end
+end
 
 local gameMainMenuRef = Game.main_menu
 function Game:main_menu(change_context)
@@ -50,6 +85,9 @@ function Game:main_menu(change_context)
 			major = G.ROOM_ATTACH
 		}
 	})
+	for k, _ in pairs(G.C.SUITS) do
+		G.FUNCS.SMODS_refresh_deckskin_extras(G.SETTINGS.CUSTOM_DECK.Collabs[k], k)
+	end
 end
 
 local gameUpdateRef = Game.update
@@ -1447,6 +1485,19 @@ end
 function initGlobals()
 	G.F_NO_ACHIEVEMENTS = true
 	G.F_CRASH_REPORTS = false
+	G.VANILLA_COLLABS = {
+		collabs = {},
+		lc_colours = {},
+		hc_colours = {},
+		ui_pos = {}
+	}
+	for k, v in pairs(G.C.SO_1) do G.VANILLA_COLLABS.lc_colours[k] = v end
+	for k, v in pairs(G.C.SO_2) do G.VANILLA_COLLABS.hc_colours[k] = v end
+	for _, suit in pairs(G.COLLABS.options) do
+		for _, collab in pairs(suit) do
+			table.insert(G.VANILLA_COLLABS.collabs, collab)
+		end
+	end
 end
 
 function G.FUNCS.update_mod_list(args)

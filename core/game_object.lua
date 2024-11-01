@@ -1843,6 +1843,10 @@ Set `prefix_config.key = false` on your object instead.]]):format(obj.key), obj.
         ui_pos = { x = 3, y = 1 },
         keep_base_colours = true,
     }
+
+    for k, v in pairs(SMODS.Suits) do
+        G.VANILLA_COLLABS.ui_pos[k] = v.ui_pos
+    end
     -------------------------------------------------------------------------------------------------
     ----- API CODE GameObject.Rank
     -------------------------------------------------------------------------------------------------
@@ -2297,7 +2301,7 @@ Set `prefix_config.key = false` on your object instead.]]):format(obj.key), obj.
             'ranks',
             'lc_atlas',
         },
-        posStyle = 'deck',
+		posStyle = 'deck',
         set = 'DeckSkin',
         process_loc_text = function(self)
             if G.localization.misc.collabs[self.suit] == nil then
@@ -2317,6 +2321,12 @@ Set `prefix_config.key = false` on your object instead.]]):format(obj.key), obj.
             end
             if self:check_dependencies() then
                 self.hc_atlas = self.hc_atlas or self.lc_atlas
+                if self.hc_ui_atlas == nil then self.hc_ui_atlas = self.lc_ui_atlas end
+                if self.hc_colour == nil then self.hc_colour = self.lc_colour end
+                if self.posStyle == nil then self.posStyle = 'deck' end
+
+                if type(self.lc_colour) == 'string' then self.lc_colour = HEX(self.lc_colour) end
+                if type(self.hc_colour) == 'string' then self.hc_colour = HEX(self.lc_colour) end
 
                 if not (self.posStyle == 'collab' or self.posStyle == 'suit' or self.posStyle == 'deck') then
                     sendWarnMessage(('%s is not a valid posStyle on DeckSkin %s. Supported posStyle values are \'collab\', \'suit\' and \'deck\''):format(self.posStyle, self.key), self.set)
